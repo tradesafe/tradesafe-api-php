@@ -1,0 +1,36 @@
+{
+    "name": "tradesafe/api",
+    "description": "PHP client for the TradeSafe GraphQL API",
+    "keywords": ["tradesafe","api","payment", "oauth", "graphql"],
+    "type": "library",
+    "require": {
+        "php": ">=7.3.0",
+        "ext-json": "*",
+        "league/oauth2-client": "^2.5",
+        "guzzlehttp/guzzle": "^6.0|^7.0"
+    },
+    "require-dev": {},
+    "homepage": "https://github.com/tradesafe/tradesafe-api-php",
+    "license": "Apache-2.0",
+    "support": {
+        "source": "https://github.com/tradesafe/tradesafe-api-php",
+        "issues": "https://github.com/tradesafe/tradesafe-api-php/issues"
+    },
+    "authors": [
+        {
+            "name": "Richard Banks",
+            "email": "richard.banks@tradesafe.co.za",
+            "homepage": "https://www.tradesafe.co.za"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "TradeSafe\\Api\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TradeSafe\\Api\\Test\\": "test/"
+        }
+    }
+}
