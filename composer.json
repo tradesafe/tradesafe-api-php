@@ -10,7 +10,7 @@
         "guzzlehttp/guzzle": "^6.0|^7.0"
     },
     "require-dev": {},
-    "homepage": "https://github.com/tradesafe/tradesafe-api-php",
+    "homepage": "https://developer.tradesafe.co.za",
     "license": "Apache-2.0",
     "support": {
         "source": "https://github.com/tradesafe/tradesafe-api-php",

@@ -5,9 +5,12 @@ namespace TradeSafe\Api;
 
 
 use GuzzleHttp\Client as HttpClient;
+use TradeSafe\Api\Traits\Tokens;
+use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
+    use Transactions, Tokens;
     /**
      * Application Client ID.
      *
@@ -152,135 +155,13 @@ class Client
         return $apiResponse['data']['statistics'];
     }
 
-    /**
-     * Get a list of transactions.
-     *
-     * @param int $page
-     * @param int $first
-     * @return mixed
-     */
-    public function getTransactions($page = 1, $first = 10)
+    public function getProfile()
     {
         $apiResponse = self::callApi(self::createGraphQLRequest(
-            'queries/transactions.graphql',
-            'transactions',
-            [
-                'first' => $first,
-                'page' => $page
-            ]
+            'queries/profiles.graphql',
+            'apiProfile'
         ));
 
-        return $apiResponse['data']['transactions'];
-    }
-
-    /**
-     * Get a transaction.
-     *
-     * @param $id
-     * @return mixed
-     */
-    public function getTransaction($id)
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'queries/transactions.graphql',
-            'transaction',
-            [
-                'id' => $id
-            ]
-        ));
-
-        return $apiResponse['data']['transaction'];
-    }
-
-    public function createTransaction(Transaction $transaction)
-    {
-        $operation = 'transactionCreate';
-        $createTransactionInput = $transaction->toArray();
-
-        $parties = $createTransactionInput['parties'];
-        $createTransactionInput['parties'] = [
-            'create' => $parties
-        ];
-
-        $allocations = $createTransactionInput['allocations'];
-        $createTransactionInput['allocations'] = [
-            'create' => $allocations
-        ];
-
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'mutations/transactions.graphql',
-            $operation,
-            [
-                'input' => $createTransactionInput
-            ]
-        ));
-
-        return $apiResponse['data'][$operation];
-    }
-
-    /**
-     * Update a transaction.
-     *
-     * @param $id
-     * @param $args
-     * @return mixed
-     */
-    public function updateTransaction($id, $args)
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'mutations/transactions.graphql',
-            'transactionUpdate',
-            [
-                'id' => $id
-            ]
-        ));
-
-        return $apiResponse['data']['transaction'];
-    }
-
-    /**
-     * Delete a transaction.
-     *
-     * @param $id
-     * @return mixed
-     */
-    public function deleteTransaction($id)
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'mutations/transactions.graphql',
-            'transactionDelete',
-            [
-                'id' => $id
-            ]
-        ));
-
-        return $apiResponse['data']['transaction'];
-    }
-
-    public function getTokens($page = 1, $first = 10)
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'queries/tokens.graphql',
-            'tokens',
-            [
-                'first' => $first,
-                'page' => $page
-            ]
-        ));
-
-        return $apiResponse['data']['tokens'];
-    }
-
-    public function getToken($id)
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'queries/tokens.graphql',
-            'token',
-            [
-                'id' => $id
-            ]
-        ));
-
-        return $apiResponse['data']['token'];
+        return $apiResponse['data']['apiProfile'];
     }
 }
