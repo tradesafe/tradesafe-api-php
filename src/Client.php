@@ -5,12 +5,14 @@ namespace TradeSafe\Api;
 
 
 use GuzzleHttp\Client as HttpClient;
+use TradeSafe\Api\Traits\Profile;
+use TradeSafe\Api\Traits\Statistics;
 use TradeSafe\Api\Traits\Tokens;
 use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
-    use Transactions, Tokens;
+    use Transactions, Tokens, Statistics, Profile;
     /**
      * Application Client ID.
      *
@@ -86,13 +88,15 @@ class Client
      */
     public function generateAuthToken()
     {
+        $domain = 'auth.tradesafe.co.za';
+
         $provider = new \League\OAuth2\Client\Provider\GenericProvider([
             'clientId' => $this->clientId,
             'clientSecret' => $this->clientSecret,
             'redirectUri' => $this->clientRedirectUri,
-            'urlAuthorize' => 'https://auth.tradesafe.co.za/oauth/authorize',
-            'urlAccessToken' => 'https://auth.tradesafe.co.za/oauth/token',
-            'urlResourceOwnerDetails' => 'https://auth.tradesafe.co.za/oauth/resource',
+            'urlAuthorize' => 'https://' . $domain . '/oauth/authorize',
+            'urlAccessToken' => 'https://' . $domain . '/oauth/token',
+            'urlResourceOwnerDetails' => 'https://' . $domain . '/oauth/resource',
         ]);
 
         $this->token = $provider->getAccessToken('client_credentials');
@@ -123,7 +127,9 @@ class Client
             'body' => json_encode($request)
         ]);
 
-        return json_decode($result->getBody()->getContents(), true);
+        $response = json_decode($result->getBody()->getContents(), true);
+
+        return $response;
     }
 
     /**
@@ -143,25 +149,5 @@ class Client
             'query' => $query,
             'variables' => $variables
         ];
-    }
-
-    public function getStatistics()
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'queries/statistics.graphql',
-            'statistics'
-        ));
-
-        return $apiResponse['data']['statistics'];
-    }
-
-    public function getProfile()
-    {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'queries/profiles.graphql',
-            'apiProfile'
-        ));
-
-        return $apiResponse['data']['apiProfile'];
     }
 }

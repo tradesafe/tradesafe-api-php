@@ -1,0 +1,119 @@
+query tokens($first: Int, $page: Int) {
+    tokens(first: $first, page: $page) {
+        data {
+            id
+            name
+            reference
+            user {
+                givenName
+                familyName
+                email
+                mobile
+                idNumber
+            }
+            organization {
+                name
+                tradeName
+                type
+                registration
+                taxNumber
+            }
+        }
+    }
+}
+
+query token($id: ID!) {
+    token(id: $id) {
+        id
+        name
+        reference
+        user {
+            givenName
+            familyName
+            email
+            mobile
+            idNumber
+        }
+        organization {
+            name
+            tradeName
+            type
+            registration
+            taxNumber
+        }
+    }
+}
+
+mutation tokenUserCreate($givenName: String, $familyName: String, $email: Email, $mobile: String, $idNumber: String, $idType: IdType, $idCountry: Country, $bank: UniversalBranchCode, $accountNumber: String, $accountType: BankAccountType) {
+    tokenCreate(input: {
+        user: {
+            givenName: $givenName
+            familyName: $familyName
+            email: $email
+            mobile: $mobile
+            idNumber: $idNumber
+            idType: $idType
+            idCountry: $idCountry
+        }
+        bankAccount: {
+            bank: $bank
+            accountNumber: $accountNumber
+            accountType: $accountType
+        }
+    }) {
+        id
+        name
+        reference
+        user {
+            givenName
+            familyName
+            email
+            mobile
+            idNumber
+        }
+    }
+}
+
+mutation tokenOrganizationCreate($givenName: String, $familyName: String, $email: Email, $mobile: String, $idNumber: String, $idType: IdType, $idCountry: Country, $bank: UniversalBranchCode, $accountNumber: String, $accountType: BankAccountType, $organizationName: String, $organizationTradeName: String, $organizationType: OrganizationType, $organizationRegistrationNumber: String, $organizationTaxNumber: String) {
+    tokenCreate(input: {
+        user: {
+            givenName: $givenName
+            familyName: $familyName
+            email: $email
+            mobile: $mobile
+            idNumber: $idNumber
+            idType: $idType
+            idCountry: $idCountry
+        }
+        organization: {
+            name: $organizationName,
+            tradeName: $organizationTradeName
+            type: $organizationType
+            registrationNumber: $organizationRegistrationNumber
+            taxNumber: $organizationTaxNumber
+        }
+        bankAccount: {
+            bank: $bank
+            accountNumber: $accountNumber
+            accountType: $accountType
+        }
+    }) {
+        id
+        name
+        reference
+        user {
+            givenName
+            familyName
+            email
+            mobile
+            idNumber
+        }
+        organization {
+            name
+            tradeName
+            type
+            registration
+            taxNumber
+        }
+    }
+}

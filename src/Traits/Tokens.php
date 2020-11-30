@@ -2,12 +2,21 @@
 
 namespace TradeSafe\Api\Traits;
 
-trait Tokens {
+trait Tokens
+{
     public function createToken($args)
     {
+        $operation = 'tokenUserCreate';
+
+        if (isset($args['organizationName'])
+            && isset($args['organizationType'])
+            && isset($args['organizationRegistrationNumber'])) {
+            $operation = 'tokenOrganizationCreate';
+        }
+
         $apiResponse = self::callApi(self::createGraphQLRequest(
             'tokens.graphql',
-            'tokenCreate',
+            $operation,
             $args
         ));
 

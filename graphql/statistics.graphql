@@ -1,0 +1,7 @@
+query statistics {
+    statistics {
+        balance
+        activeBalance
+        activeTransactions
+    }
+}

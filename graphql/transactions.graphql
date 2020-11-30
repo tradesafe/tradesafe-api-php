@@ -1,0 +1,104 @@
+query transactions($first: Int, $page: Int){
+    transactions(first: $first, page: $page) {
+        data {
+            id
+            title
+            description
+            state
+            parties {
+                name
+                email
+            }
+            allocations {
+                title
+                description
+                value
+            }
+            createdAt
+        }
+        paginatorInfo {
+            perPage
+            currentPage
+            hasMorePages
+            lastPage
+            firstItem
+            lastItem
+            total
+            count
+        }
+    }
+}
+
+query transaction($id: ID!){
+    transaction(id: $id) {
+        id
+        title
+        description
+        parties {
+            name
+            role
+            email
+            details {
+                user {
+                    givenName
+                    familyName
+                    email
+                }
+            }
+        }
+        allocations {
+            title
+            description
+            value
+        }
+        createdAt
+    }
+}
+
+mutation transactionCreate($title: String!, $description: String!, $industry: Industry!, $value: Float, $buyerToken: String, $sellerToken: String) {
+    transactionCreate(input: {
+        title: $title,
+        description: $description,
+        industry: $industry,
+        currency: ZAR,
+        feeAllocation: SELLER,
+        allocations: {
+            create: [
+                {
+                    title: $title,
+                    description: $description,
+                    value: $value
+                    daysToDeliver: 7,
+                    daysToInspect: 7
+                }
+            ]
+        },
+        parties: {
+            create: [
+                {
+                    token: $buyerToken,
+                    role: BUYER
+                },
+                {
+                    token: $sellerToken,
+                    role: SELLER
+                }
+            ]
+        }
+    }) {
+        id
+        createdAt
+    }
+}
+
+mutation transactionUpdate($input: UpdateTransactionInput) {
+    transactionUpdate(input: $input) {
+        id
+    }
+}
+
+mutation transactionDelete($id: ID!) {
+    transactionDelete(id: $id) {
+        deletedAt
+    }
+}

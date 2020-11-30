@@ -1,0 +1,12 @@
+query apiProfile {
+    apiProfile {
+        id
+        name
+        organizations {
+            id
+            name
+            verified
+            token
+        }
+    }
+}
