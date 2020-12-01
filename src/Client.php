@@ -49,16 +49,23 @@ class Client
     private $httpClient;
 
     /**
+     * OAuth Domain Name.
+     *
+     * @var string
+     */
+    private $authDomain;
+
+    /**
      * Base directory for GraphQL schema files.
      *
      * @var string
      */
     private $schemaBasePath;
 
-    public function __construct($domain = "api.tradesafe.co.za")
+    public function __construct($apiDomain = "api.tradesafe.co.za", $authDomain = 'auth.tradesafe.co.za')
     {
         $this->httpClient = new HttpClient([
-            'base_uri' => sprintf('https://%s/', $domain),
+            'base_uri' => sprintf('https://%s/', $apiDomain),
             'headers' => [
                 'accept' => '*/*',
                 'content-type' => 'application/json',
@@ -66,6 +73,7 @@ class Client
             'verify' => false
         ]);
 
+        $this->authDomain = $authDomain;
         $this->schemaBasePath = __DIR__ . '/../graphql/';
     }
 
@@ -88,18 +96,23 @@ class Client
      */
     public function generateAuthToken()
     {
-        $domain = 'auth.tradesafe.co.za';
-
         $provider = new \League\OAuth2\Client\Provider\GenericProvider([
             'clientId' => $this->clientId,
             'clientSecret' => $this->clientSecret,
             'redirectUri' => $this->clientRedirectUri,
-            'urlAuthorize' => 'https://' . $domain . '/oauth/authorize',
-            'urlAccessToken' => 'https://' . $domain . '/oauth/token',
-            'urlResourceOwnerDetails' => 'https://' . $domain . '/oauth/resource',
+            'urlAuthorize' => 'https://' . $this->authDomain . '/oauth/authorize',
+            'urlAccessToken' => 'https://' . $this->authDomain . '/oauth/token',
+            'urlResourceOwnerDetails' => 'https://' . $this->authDomain . '/oauth/resource',
         ]);
 
-        $this->token = $provider->getAccessToken('client_credentials');
+        $accessToken = $provider->getAccessToken('client_credentials');
+
+        $this->token = $accessToken->getToken();
+
+        return [
+            'token' =>$this->token,
+            'expires' => $accessToken->getExpires(),
+        ];
     }
 
     /**
@@ -116,6 +129,7 @@ class Client
      *
      * @param $request
      * @return mixed
+     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
      */
     private function callApi($request)
     {
@@ -128,6 +142,10 @@ class Client
         ]);
 
         $response = json_decode($result->getBody()->getContents(), true);
+
+        if (isset($response['errors'])) {
+            throw new \Exception($response['errors'][0]['message']);
+        }
 
         return $response;
     }
