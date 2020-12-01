@@ -5,6 +5,7 @@ namespace TradeSafe\Api;
 
 
 use GuzzleHttp\Client as HttpClient;
+use TradeSafe\Api\Traits\Allocations;
 use TradeSafe\Api\Traits\Calculator;
 use TradeSafe\Api\Traits\Profile;
 use TradeSafe\Api\Traits\Statistics;
@@ -13,7 +14,7 @@ use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
-    use Calculator, Profile, Statistics, Tokens, Transactions;
+    use Allocations, Calculator, Profile, Statistics, Tokens, Transactions;
     /**
      * Application Client ID.
      *
@@ -139,7 +140,7 @@ class Client
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->token,
             ],
-            'body' => json_encode($request)
+            'json' => $request
         ]);
 
         $response = json_decode($result->getBody()->getContents(), true);

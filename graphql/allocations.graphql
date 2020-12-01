@@ -1,0 +1,13 @@
+mutation allocationStartDelivery($id: ID!) {
+    allocationStartDelivery(id: $id) {
+        id
+        state
+    }
+}
+
+mutation allocationAcceptDelivery($id: ID!) {
+    allocationAcceptDelivery(id: $id) {
+        id
+        state
+    }
+}

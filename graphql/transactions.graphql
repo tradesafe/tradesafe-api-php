@@ -85,6 +85,7 @@ query transaction($id: ID!){
             }
         }
         allocations {
+            id
             title
             description
             value
