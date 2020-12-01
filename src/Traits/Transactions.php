@@ -103,4 +103,24 @@ trait Transactions {
 
         return $apiResponse['data']['transaction'];
     }
+
+    /**
+     * Create Transaction Deposit
+     * @param $id
+     * @param $method
+     * @return mixed
+     */
+    public function createTransactionDeposit($id, $method)
+    {
+        $apiResponse = self::callApi(self::createGraphQLRequest(
+            'transactions.graphql',
+            'transactionDeposit',
+            [
+                'id' => $id,
+                'method' => $method,
+            ]
+        ));
+
+        return $apiResponse['data']['transactionDeposit'];
+    }
 }

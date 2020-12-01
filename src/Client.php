@@ -5,6 +5,7 @@ namespace TradeSafe\Api;
 
 
 use GuzzleHttp\Client as HttpClient;
+use TradeSafe\Api\Traits\Calculator;
 use TradeSafe\Api\Traits\Profile;
 use TradeSafe\Api\Traits\Statistics;
 use TradeSafe\Api\Traits\Tokens;
@@ -12,7 +13,7 @@ use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
-    use Transactions, Tokens, Statistics, Profile;
+    use Calculator, Profile, Statistics, Tokens, Transactions;
     /**
      * Application Client ID.
      *

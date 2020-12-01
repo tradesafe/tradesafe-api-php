@@ -34,7 +34,45 @@ query transaction($id: ID!){
         id
         title
         description
+        state
+        industry
+        feeAllocation
+        calculation {
+            baseValue
+            processingFeePercentage
+            processingFeeValue
+            processingFeeVat
+            processingFeeTotal
+            totalValue
+            totalDeposits
+            gatewayProcessingFees {
+                manualEft {
+                    processingFee
+                    totalValue
+                }
+                ecentric {
+                    processingFee
+                    totalValue
+                }
+                ozow {
+                    processingFee
+                    totalValue
+                }
+                snapscan {
+                    processingFee
+                    totalValue
+                }
+            }
+        }
+        deposits {
+            id
+            value
+            method
+            processed
+            paymentLink
+        }
         parties {
+            id
             name
             role
             email
@@ -100,5 +138,14 @@ mutation transactionUpdate($input: UpdateTransactionInput) {
 mutation transactionDelete($id: ID!) {
     transactionDelete(id: $id) {
         deletedAt
+    }
+}
+
+mutation transactionDeposit($id: ID!, $method: DepositMethod!) {
+    transactionDeposit(id: $id, method: $method) {
+        id
+        value
+        processed
+        paymentLink
     }
 }

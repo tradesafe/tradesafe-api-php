@@ -1,0 +1,64 @@
+mutation calculator($feeAllocation: FeeAllocation!, $industry: Industry, $value: Float) {
+    calculator(input: {
+        feeAllocation: $feeAllocation
+        industry: $industry
+        allocations: [
+            {
+                value: $value
+            }
+        ]
+        parties: [
+            {
+                role: BUYER
+            }
+            {
+                role: SELLER
+            }
+        ]
+    }) {
+        baseValue
+        totalValue
+        totalDeposits
+        processingFeePercentage
+        processingFeeValue
+        processingFeeVat
+        processingFeeTotal
+        gatewayProcessingFees {
+            manualEft {
+                processingFee
+                totalValue
+            }
+            ecentric {
+                processingFee
+                totalValue
+            }
+            ozow {
+                processingFee
+                totalValue
+            }
+            snapscan {
+                processingFee
+                totalValue
+            }
+        }
+        parties {
+            role
+            deposit
+            payout
+            commission
+            processingFee
+            agentFee
+            beneficiaryFee
+            totalFee
+        }
+        allocations {
+            value
+            units
+            unitCost
+            refund
+            payout
+            fee
+            processingFee
+        }
+    }
+}
