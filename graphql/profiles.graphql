@@ -2,6 +2,7 @@ query apiProfile {
     apiProfile {
         id
         name
+        token
         organizations {
             id
             name
