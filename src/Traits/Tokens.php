@@ -23,6 +23,25 @@ trait Tokens
         return $apiResponse['data']['tokenCreate'];
     }
 
+    public function createTokenWithoutBankAccount($args)
+    {
+        $operation = 'tokenUserCreateWithoutBankAccount';
+
+        if (isset($args['organizationName'])
+            && isset($args['organizationType'])
+            && isset($args['organizationRegistrationNumber'])) {
+            $operation = 'tokenOrganizationCreateWithoutBankAccount';
+        }
+
+        $apiResponse = self::callApi(self::createGraphQLRequest(
+            'tokens.graphql',
+            $operation,
+            $args
+        ));
+
+        return $apiResponse['data']['tokenCreate'];
+    }
+
     public function getTokens($page = 1, $first = 10)
     {
         $apiResponse = self::callApi(self::createGraphQLRequest(

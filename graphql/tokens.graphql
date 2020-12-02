@@ -117,3 +117,67 @@ mutation tokenOrganizationCreate($givenName: String, $familyName: String, $email
         }
     }
 }
+
+mutation tokenUserCreateWithoutBankAccount($givenName: String, $familyName: String, $email: Email, $mobile: String, $idNumber: String, $idType: IdType, $idCountry: Country) {
+    tokenCreate(input: {
+        user: {
+            givenName: $givenName
+            familyName: $familyName
+            email: $email
+            mobile: $mobile
+            idNumber: $idNumber
+            idType: $idType
+            idCountry: $idCountry
+        }
+    }) {
+        id
+        name
+        reference
+        user {
+            givenName
+            familyName
+            email
+            mobile
+            idNumber
+        }
+    }
+}
+
+mutation tokenOrganizationCreateWithoutBankAccount($givenName: String, $familyName: String, $email: Email, $mobile: String, $idNumber: String, $idType: IdType, $idCountry: Country, $organizationName: String, $organizationTradeName: String, $organizationType: OrganizationType, $organizationRegistrationNumber: String, $organizationTaxNumber: String) {
+    tokenCreate(input: {
+        user: {
+            givenName: $givenName
+            familyName: $familyName
+            email: $email
+            mobile: $mobile
+            idNumber: $idNumber
+            idType: $idType
+            idCountry: $idCountry
+        }
+        organization: {
+            name: $organizationName,
+            tradeName: $organizationTradeName
+            type: $organizationType
+            registrationNumber: $organizationRegistrationNumber
+            taxNumber: $organizationTaxNumber
+        }
+    }) {
+        id
+        name
+        reference
+        user {
+            givenName
+            familyName
+            email
+            mobile
+            idNumber
+        }
+        organization {
+            name
+            tradeName
+            type
+            registration
+            taxNumber
+        }
+    }
+}
