@@ -56,6 +56,7 @@ trait Transactions {
                 'title' => $transactionData['title'],
                 'description' => $transactionData['description'],
                 'industry' => $transactionData['industry'],
+                'workflow' => $transactionData['workflow'] ?? 'STANDARD',
                 'value' => $transactionData['value'],
                 'buyerToken' => $transactionData['buyerToken'],
                 'sellerToken' => $transactionData['sellerToken']

@@ -94,32 +94,33 @@ query transaction($id: ID!){
     }
 }
 
-mutation transactionCreate($title: String!, $description: String!, $industry: Industry!, $value: Float, $buyerToken: String, $sellerToken: String) {
+mutation transactionCreate($title: String!, $description: String!, $industry: Industry!, $workflow: TransactionWorkflow! $value: Float, $buyerToken: String, $sellerToken: String) {
     transactionCreate(input: {
-        title: $title,
-        description: $description,
-        industry: $industry,
-        currency: ZAR,
-        feeAllocation: SELLER,
+        title: $title
+        description: $description
+        industry: $industry
+        currency: ZAR
+        feeAllocation: SELLER
+        workflow: $workflow
         allocations: {
             create: [
                 {
-                    title: $title,
-                    description: $description,
+                    title: $title
+                    description: $description
                     value: $value
-                    daysToDeliver: 7,
+                    daysToDeliver: 7
                     daysToInspect: 7
                 }
             ]
-        },
+        }
         parties: {
             create: [
                 {
-                    token: $buyerToken,
+                    token: $buyerToken
                     role: BUYER
-                },
+                }
                 {
-                    token: $sellerToken,
+                    token: $sellerToken
                     role: SELLER
                 }
             ]
