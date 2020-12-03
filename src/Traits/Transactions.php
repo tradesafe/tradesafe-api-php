@@ -109,9 +109,10 @@ trait Transactions {
      * Create Transaction Deposit
      * @param $id
      * @param $method
+     * @param null $redirects
      * @return mixed
      */
-    public function createTransactionDeposit($id, $method)
+    public function createTransactionDeposit($id, $method, $redirects)
     {
         $apiResponse = self::callApi(self::createGraphQLRequest(
             'transactions.graphql',
@@ -119,6 +120,9 @@ trait Transactions {
             [
                 'id' => $id,
                 'method' => $method,
+                'successUrl' => $redirects['success'],
+                'failureUrl' => $redirects['failure'],
+                'cancelUrl' => $redirects['cancel'],
             ]
         ));
 

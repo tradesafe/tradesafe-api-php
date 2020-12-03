@@ -143,11 +143,16 @@ mutation transactionDelete($id: ID!) {
     }
 }
 
-mutation transactionDeposit($id: ID!, $method: DepositMethod!) {
-    transactionDeposit(id: $id, method: $method) {
+mutation transactionDeposit($id: ID!, $method: DepositMethod!, $successUrl: String!, $failureUrl: String!, $cancelUrl: String!) {
+    transactionDeposit(id: $id, method: $method, redirects: {success: $successUrl, failure: $failureUrl, cancel: $cancelUrl}) {
         id
         value
         processed
         paymentLink
+        redirects {
+            success
+            failure
+            cancel
+        }
     }
 }

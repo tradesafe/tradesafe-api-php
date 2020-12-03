@@ -18,6 +18,13 @@ query tokens($first: Int, $page: Int) {
                 registration
                 taxNumber
             }
+            bankAccount {
+                accountNumber
+                accountType
+                bank
+                branchCode
+                bankName
+            }
         }
     }
 }
@@ -40,6 +47,13 @@ query token($id: ID!) {
             type
             registration
             taxNumber
+        }
+        bankAccount {
+            accountNumber
+            accountType
+            bank
+            branchCode
+            bankName
         }
     }
 }
