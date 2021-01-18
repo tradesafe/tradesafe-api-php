@@ -7,9 +7,9 @@
         "php": ">=7.3.0",
         "ext-json": "*",
         "league/oauth2-client": "^2.5",
-        "guzzlehttp/guzzle": "^6.0|^7.0"
+        "guzzlehttp/guzzle": "^6.0|^7.0",
+        "gmostafa/php-graphql-client": "^1.8"
     },
-    "require-dev": {},
     "homepage": "https://developer.tradesafe.co.za",
     "license": "Apache-2.0",
     "support": {
