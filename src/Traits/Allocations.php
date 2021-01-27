@@ -2,31 +2,39 @@
 
 namespace TradeSafe\Api\Traits;
 
+use GraphQL\Mutation;
+
 trait Allocations
 {
     public function allocationStartDelivery($id)
     {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'allocations.graphql',
-            'allocationStartDelivery',
-            [
-                'id' => $id,
-            ]
-        ));
+        $gql = (new Mutation('allocationStartDelivery'));
 
-        return $apiResponse['data']['allocationStartDelivery'];
+        $gql->setArguments(['id' => $id]);
+
+        $gql->setSelectionSet([
+            'id',
+            'state'
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['allocationStartDelivery'];
     }
 
     public function allocationAcceptDelivery($id)
     {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'allocations.graphql',
-            'allocationAcceptDelivery',
-            [
-                'id' => $id,
-            ]
-        ));
+        $gql = (new Mutation('allocationAcceptDelivery'));
 
-        return $apiResponse['data']['allocationAcceptDelivery'];
+        $gql->setArguments(['id' => $id]);
+
+        $gql->setSelectionSet([
+            'id',
+            'state'
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['allocationAcceptDelivery'];
     }
 }

@@ -5,8 +5,10 @@ namespace TradeSafe\Api;
 
 
 use GuzzleHttp\Client as HttpClient;
+use GraphQL\Client as GraphQLClient;
 use TradeSafe\Api\Traits\Allocations;
 use TradeSafe\Api\Traits\Calculator;
+use TradeSafe\Api\Traits\Constants;
 use TradeSafe\Api\Traits\Profile;
 use TradeSafe\Api\Traits\Statistics;
 use TradeSafe\Api\Traits\Tokens;
@@ -14,7 +16,8 @@ use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
-    use Allocations, Calculator, Profile, Statistics, Tokens, Transactions;
+    use Allocations, Calculator, Constants, Profile, Statistics, Tokens, Transactions;
+
     /**
      * Application Client ID.
      *
@@ -51,6 +54,13 @@ class Client
     private $httpClient;
 
     /**
+     * GraphQL API Domain Name.
+     *
+     * @var string
+     */
+    private $apiDomain;
+
+    /**
      * OAuth Domain Name.
      *
      * @var string
@@ -75,8 +85,11 @@ class Client
             'verify' => false
         ]);
 
+        $this->apiDomain = $apiDomain;
         $this->authDomain = $authDomain;
         $this->schemaBasePath = __DIR__ . '/../graphql/';
+
+        $this->transactionsInit();
     }
 
     /**
@@ -112,7 +125,7 @@ class Client
         $this->token = $accessToken->getToken();
 
         return [
-            'token' =>$this->token,
+            'token' => $this->token,
             'expires' => $accessToken->getExpires(),
         ];
     }
@@ -130,26 +143,26 @@ class Client
      * Send request to the API.
      *
      * @param $request
+     * @param array $variables
+     * @param bool $auth
      * @return mixed
-     * @throws \Exception|\GuzzleHttp\Exception\GuzzleException
      */
-    private function callApi($request)
+    private function callApi($request, $variables = [], $auth = true)
     {
-        $result = $this->httpClient->post('graphql', [
-            'debug' => false,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->token,
-            ],
-            'json' => $request
-        ]);
+        $authorizationHeaders = [];
 
-        $response = json_decode($result->getBody()->getContents(), true);
-
-        if (isset($response['errors'])) {
-            throw new \Exception($response['errors'][0]['message']);
+        if ($auth) {
+            $authorizationHeaders = ['Authorization' => 'Bearer ' . $this->token];
         }
 
-        return $response;
+        $gqlClient = new GraphQLClient(
+            sprintf('https://%s/graphql', $this->apiDomain),
+            $authorizationHeaders
+        );
+
+        $response = $gqlClient->runQuery($request, true, $variables);
+
+        return $response->getData();
     }
 
     /**

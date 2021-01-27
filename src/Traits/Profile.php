@@ -2,15 +2,29 @@
 
 namespace TradeSafe\Api\Traits;
 
+use GraphQL\Query;
+
 trait Profile
 {
     public function getProfile()
     {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'profiles.graphql',
-            'apiProfile'
-        ));
+        $gql = (new Query('apiProfile'));
 
-        return $apiResponse['data']['apiProfile'];
+        $gql->setSelectionSet([
+            'id',
+            'name',
+            'token',
+            (new Query('organizations'))
+                ->setSelectionSet([
+                    'id',
+                    'name',
+                    'verified',
+                    'token'
+                ]),
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['apiProfile'];
     }
 }

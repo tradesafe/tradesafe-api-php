@@ -2,70 +2,176 @@
 
 namespace TradeSafe\Api\Traits;
 
+use GraphQL\Mutation;
+use GraphQL\Query;
+use GraphQL\RawObject;
+
 trait Tokens
 {
-    public function createToken($args)
+    public function createToken($user, $organization = null, $bankAccount = null)
     {
-        $operation = 'tokenUserCreate';
+        $gql = (new Mutation('tokenCreate'));
 
-        if (isset($args['organizationName'])
-            && isset($args['organizationType'])
-            && isset($args['organizationRegistrationNumber'])) {
-            $operation = 'tokenOrganizationCreate';
+        $input = sprintf('user: {
+            givenName: "%s"
+            familyName: "%s"
+            email: "%s"
+            mobile: "%s"
+            idNumber: "%s"
+            idType: %s
+            idCountry: %s
+        }', $user['givenName'], $user['familyName'], $user['email'], $user['mobile'], $user['idNumber'], $user['idType'], $user['idCountry']);
+
+        if (isset($organization)) {
+            $input .= sprintf('organization: {
+                name: "%s"
+                tradeName: "%s"
+                type: %s
+                registrationNumber: "%s"
+                taxNumber: "%s"
+            }', $organization['name'], $organization['tradeName'], $organization['type'], $organization['registrationNumber'], $organization['taxNumber']);
         }
 
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'tokens.graphql',
-            $operation,
-            $args
-        ));
-
-        return $apiResponse['data']['tokenCreate'];
-    }
-
-    public function createTokenWithoutBankAccount($args)
-    {
-        $operation = 'tokenUserCreateWithoutBankAccount';
-
-        if (isset($args['organizationName'])
-            && isset($args['organizationType'])
-            && isset($args['organizationRegistrationNumber'])) {
-            $operation = 'tokenOrganizationCreateWithoutBankAccount';
+        if (isset($bankAccount)) {
+            $input .= sprintf('bankAccount: {
+                bank: %s
+                accountNumber: "%s"
+                accountType: %s
+            }', $bankAccount['bank'], $bankAccount['accountNumber'], $bankAccount['accountType']);
         }
 
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'tokens.graphql',
-            $operation,
-            $args
-        ));
+        $input = '{' . $input . '}';
 
-        return $apiResponse['data']['tokenCreate'];
+        $gql->setArguments(['input' => new RawObject($input)]);
+
+        $gql->setSelectionSet([
+            'id',
+            'name',
+            'reference',
+            (new Query('user'))
+                ->setSelectionSet([
+                    'givenName',
+                    'familyName',
+                    'email',
+                    'mobile',
+                    'idNumber'
+                ]),
+            (new Query('organization'))
+                ->setSelectionSet([
+                    'name',
+                    'tradeName',
+                    'type',
+                    'registration',
+                    'taxNumber'
+                ]),
+            (new Query('bankAccount'))
+                ->setSelectionSet([
+                    'accountNumber',
+                    'accountType',
+                    'bank',
+                    'branchCode',
+                    'bankName'
+                ]),
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['tokenCreate'];
     }
 
     public function getTokens($page = 1, $first = 10)
     {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'tokens.graphql',
-            'tokens',
-            [
-                'first' => $first,
-                'page' => $page
-            ]
-        ));
+        $gql = (new Query('tokens'));
 
-        return $apiResponse['data']['tokens'];
+        $gql->setArguments(['page' => $page, 'first' => $first]);
+
+        $gql->setSelectionSet([
+            (new Query('data'))
+                ->setSelectionSet([
+                    'id',
+                    'name',
+                    'reference',
+                    (new Query('user'))
+                        ->setSelectionSet([
+                            'givenName',
+                            'familyName',
+                            'email',
+                            'mobile',
+                            'idNumber'
+                        ]),
+                    (new Query('organization'))
+                        ->setSelectionSet([
+                            'name',
+                            'tradeName',
+                            'type',
+                            'registration',
+                            'taxNumber'
+                        ]),
+                    (new Query('bankAccount'))
+                        ->setSelectionSet([
+                            'accountNumber',
+                            'accountType',
+                            'bank',
+                            'branchCode',
+                            'bankName'
+                        ]),
+                ]),
+            (new Query('paginatorInfo'))
+                ->setSelectionSet([
+                    'perPage',
+                    'currentPage',
+                    'hasMorePages',
+                    'lastPage',
+                    'firstItem',
+                    'lastItem',
+                    'total',
+                    'count'
+                ]),
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['tokens'];
     }
 
     public function getToken($id)
     {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'tokens.graphql',
-            'token',
-            [
-                'id' => $id
-            ]
-        ));
+        $gql = (new Query('token'));
 
-        return $apiResponse['data']['token'];
+        $gql->setArguments(['id' => $id]);
+
+        $gql->setSelectionSet([
+            'id',
+            'name',
+            'reference',
+            (new Query('user'))
+                ->setSelectionSet([
+                    'givenName',
+                    'familyName',
+                    'email',
+                    'mobile',
+                    'idNumber'
+                ]),
+            (new Query('organization'))
+                ->setSelectionSet([
+                    'name',
+                    'tradeName',
+                    'type',
+                    'registration',
+                    'taxNumber'
+                ]),
+            (new Query('bankAccount'))
+                ->setSelectionSet([
+                    'accountNumber',
+                    'accountType',
+                    'bank',
+                    'branchCode',
+                    'bankName'
+                ]),
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['token'];
     }
 }

@@ -2,15 +2,22 @@
 
 namespace TradeSafe\Api\Traits;
 
+use GraphQL\Query;
+
 trait Statistics
 {
     public function getStatistics()
     {
-        $apiResponse = self::callApi(self::createGraphQLRequest(
-            'statistics.graphql',
-            'statistics'
-        ));
+        $gql = (new Query('statistics'));
 
-        return $apiResponse['data']['statistics'];
+        $gql->setSelectionSet([
+            'id',
+            'activeBalance',
+            'activeTransactions',
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['statistics'];
     }
 }
