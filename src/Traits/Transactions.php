@@ -5,6 +5,7 @@ namespace TradeSafe\Api\Traits;
 use GraphQL\Mutation;
 use GraphQL\Query;
 use GraphQL\RawObject;
+use GraphQL\Variable;
 
 trait Transactions
 {
@@ -122,7 +123,7 @@ trait Transactions
 
         foreach ($allocationData as $allocation) {
             if (isset($allocation['units'])
-            && isset($allocation['unitCost'])) {
+                && isset($allocation['unitCost'])) {
                 $allocationInput .= sprintf('{
                     title: "%s",
                     description: "%s",
@@ -262,13 +263,19 @@ trait Transactions
     {
         $gql = (new Mutation('transactionDeposit'));
 
-        $redirectUrls = sprintf('redirects: {
-            success: %s
-            failure: %s
-            cancel: %s
-        }', $redirects['success'], $redirects['failure'], $redirects['cancel']);
+        $gql->setVariables([
+            new Variable('id', 'ID', true),
+            new Variable('method', 'DepositMethod', true),
+            new Variable('redirects', 'TransactionDepositRedirects', true)
+        ]);
 
-        $gql->setArguments(['id' => $id, 'method' => $method, 'redirects' => new RawObject($redirectUrls)]);
+        $variables = [
+            'id' => $id,
+            'method' => $method,
+            'redirects' => $redirects
+        ];
+
+        $gql->setArguments(['id' => '$id', 'method' => '$method', 'redirects' => '$redirects']);
 
         $gql->setSelectionSet([
             'id',
@@ -283,7 +290,7 @@ trait Transactions
                 ]),
         ]);
 
-        $gqlResponse = self::callApi($gql);
+        $gqlResponse = self::callApi($gql, $variables);
 
         return $gqlResponse['transactionDeposit'];
     }
