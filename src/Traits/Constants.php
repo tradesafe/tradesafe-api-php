@@ -24,4 +24,21 @@ trait Constants
 
         return $gqlResponse['__type']['enumValues'];
     }
+
+    public function getTransactionStates()
+    {
+        $gql = (new Query('__type(name: "State")'));
+
+        $gql->setSelectionSet([
+            (new Query('enumValues'))
+                ->setSelectionSet([
+                    'name',
+                    'description'
+                ])
+        ]);
+
+        $gqlResponse = self::callApi($gql, [], false);
+
+        return $gqlResponse['__type']['enumValues'];
+    }
 }
