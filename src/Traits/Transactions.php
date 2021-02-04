@@ -54,6 +54,60 @@ trait Transactions
                     'processed',
                     'paymentLink'
                 ]),
+            (new Query('calculation'))
+                ->setSelectionSet([
+                    'baseValue',
+                    'totalValue',
+                    'totalDeposits',
+                    'processingFeePercentage',
+                    'processingFeeValue',
+                    'processingFeeVat',
+                    'processingFeeTotal',
+                    (new Query('gatewayProcessingFees'))
+                        ->setSelectionSet([
+                            (new Query('manualEft'))
+                                ->setSelectionSet([
+                                    'processingFee',
+                                    'totalValue'
+                                ]),
+                            (new Query('ecentric'))
+                                ->setSelectionSet([
+                                    'processingFee',
+                                    'totalValue'
+                                ]),
+                            (new Query('ozow'))
+                                ->setSelectionSet([
+                                    'processingFee',
+                                    'totalValue'
+                                ]),
+                            (new Query('snapscan'))
+                                ->setSelectionSet([
+                                    'processingFee',
+                                    'totalValue'
+                                ]),
+                        ]),
+                    (new Query('parties'))
+                        ->setSelectionSet([
+                            'role',
+                            'deposit',
+                            'payout',
+                            'commission',
+                            'processingFee',
+                            'agentFee',
+                            'beneficiaryFee',
+                            'totalFee'
+                        ]),
+                    (new Query('allocations'))
+                        ->setSelectionSet([
+                            'value',
+                            'units',
+                            'unitCost',
+                            'refund',
+                            'payout',
+                            'fee',
+                            'processingFee',
+                        ]),
+                ]),
             'createdAt',
             'updatedAt',
         ];
