@@ -34,6 +34,19 @@ trait Transactions
                                     'familyName',
                                     'email',
                                 ]),
+                            (new Query('organization'))
+                                ->setSelectionSet([
+                                    'name',
+                                    'tradeName',
+                                    'type',
+                                    'registration',
+                                    'taxNumber',
+                                ]),
+                        ]),
+                    (new Query('calculation'))
+                        ->setSelectionSet([
+                            'payout',
+                            'totalFee',
                         ]),
                     'fee',
                     'feeType',
