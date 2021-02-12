@@ -22,6 +22,7 @@ trait Constants
 
         $gqlResponse = self::callApi($gql, [], false);
 
+
         return $gqlResponse['__type']['enumValues'];
     }
 

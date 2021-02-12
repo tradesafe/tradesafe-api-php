@@ -79,6 +79,77 @@ trait Tokens
         return $gqlResponse['tokenCreate'];
     }
 
+    public function updateToken($tokenId, $user, $organization = null, $bankAccount = null)
+    {
+        $gql = (new Mutation('tokenUpdate'));
+
+        $input = sprintf('user: {
+            givenName: "%s"
+            familyName: "%s"
+            email: "%s"
+            mobile: "%s"
+            idNumber: "%s"
+            idType: %s
+            idCountry: %s
+        }', $user['givenName'], $user['familyName'], $user['email'], $user['mobile'], $user['idNumber'], $user['idType'], $user['idCountry']);
+
+        if (isset($organization)) {
+            $input .= sprintf('organization: {
+                name: "%s"
+                tradeName: "%s"
+                type: %s
+                registrationNumber: "%s"
+                taxNumber: "%s"
+            }', $organization['name'], $organization['tradeName'], $organization['type'], $organization['registrationNumber'], $organization['taxNumber']);
+        }
+
+        if (isset($bankAccount)) {
+            $input .= sprintf('bankAccount: {
+                bank: %s
+                accountNumber: "%s"
+                accountType: %s
+            }', $bankAccount['bank'], $bankAccount['accountNumber'], $bankAccount['accountType']);
+        }
+
+        $input = '{' . $input . '}';
+
+        $gql->setArguments(['id' => $tokenId, 'input' => new RawObject($input)]);
+
+        $gql->setSelectionSet([
+            'id',
+            'name',
+            'reference',
+            (new Query('user'))
+                ->setSelectionSet([
+                    'givenName',
+                    'familyName',
+                    'email',
+                    'mobile',
+                    'idNumber'
+                ]),
+            (new Query('organization'))
+                ->setSelectionSet([
+                    'name',
+                    'tradeName',
+                    'type',
+                    'registration',
+                    'taxNumber'
+                ]),
+            (new Query('bankAccount'))
+                ->setSelectionSet([
+                    'accountNumber',
+                    'accountType',
+                    'bank',
+                    'branchCode',
+                    'bankName'
+                ]),
+        ]);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse['tokenUpdate'];
+    }
+
     public function getTokens($page = 1, $first = 10)
     {
         $gql = (new Query('tokens'));
