@@ -4,7 +4,6 @@
 namespace TradeSafe\Api;
 
 
-use GuzzleHttp\Client as HttpClient;
 use GraphQL\Client as GraphQLClient;
 use TradeSafe\Api\Traits\Allocations;
 use TradeSafe\Api\Traits\Calculator;
@@ -47,13 +46,6 @@ class Client
     private $token;
 
     /**
-     * HTTP Client.
-     *
-     * @var string
-     */
-    private $httpClient;
-
-    /**
      * GraphQL API Domain Name.
      *
      * @var string
@@ -68,25 +60,24 @@ class Client
     private $authDomain;
 
     /**
+     * API Reesult Context.
+     *
+     * @var string
+     */
+    private $context;
+
+    /**
      * Base directory for GraphQL schema files.
      *
      * @var string
      */
     private $schemaBasePath;
 
-    public function __construct($apiDomain = "api.tradesafe.co.za", $authDomain = 'auth.tradesafe.co.za')
+    public function __construct($apiDomain = "api.tradesafe.co.za", $authDomain = 'auth.tradesafe.co.za', $context = null)
     {
-        $this->httpClient = new HttpClient([
-            'base_uri' => sprintf('https://%s/', $apiDomain),
-            'headers' => [
-                'accept' => '*/*',
-                'content-type' => 'application/json',
-            ],
-            'verify' => false
-        ]);
-
         $this->apiDomain = $apiDomain;
         $this->authDomain = $authDomain;
+        $this->context = $context;
         $this->schemaBasePath = __DIR__ . '/../graphql/';
 
         $this->transactionsInit();
@@ -155,9 +146,14 @@ class Client
             $authorizationHeaders = ['Authorization' => 'Bearer ' . $this->token];
         }
 
+        $httpOptions['headers'] = [
+            'TradeSafe-Context' => $this->context
+        ];
+
         $gqlClient = new GraphQLClient(
             sprintf('https://%s/graphql', $this->apiDomain),
-            $authorizationHeaders
+            $authorizationHeaders,
+            $httpOptions,
         );
 
         $response = $gqlClient->runQuery($request, true, $variables);

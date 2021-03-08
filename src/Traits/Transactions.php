@@ -361,4 +361,30 @@ trait Transactions
 
         return $gqlResponse['transactionDeposit'];
     }
+
+    /**
+     * Get Transaction Deposit Link
+     * @param $id
+     * @param $method
+     * @param null $redirects
+     * @return mixed
+     */
+    public function getTransactionDepositLink($id)
+    {
+        $gql = (new Query('transactionDepositLink'));
+
+        $gql->setVariables([
+            new Variable('id', 'ID', true),
+        ]);
+
+        $variables = [
+            'id' => $id,
+        ];
+
+        $gql->setArguments(['id' => '$id']);
+
+        $gqlResponse = self::callApi($gql, $variables);
+
+        return $gqlResponse['transactionDepositLink'];
+    }
 }
