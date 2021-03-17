@@ -57,7 +57,12 @@ trait Transactions
                     'id',
                     'title',
                     'description',
-                    'value'
+                    'value',
+                    (new Query('amendments'))
+                        ->setSelectionSet([
+                            'id',
+                            'value'
+                        ]),
                 ]),
             (new Query('deposits'))
                 ->setSelectionSet([

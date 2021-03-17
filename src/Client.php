@@ -6,6 +6,7 @@ namespace TradeSafe\Api;
 
 use GraphQL\Client as GraphQLClient;
 use TradeSafe\Api\Traits\Allocations;
+use TradeSafe\Api\Traits\Amendments;
 use TradeSafe\Api\Traits\Calculator;
 use TradeSafe\Api\Traits\Constants;
 use TradeSafe\Api\Traits\Profile;
@@ -15,7 +16,7 @@ use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
-    use Allocations, Calculator, Constants, Profile, Statistics, Tokens, Transactions;
+    use Allocations, Amendments, Calculator, Constants, Profile, Statistics, Tokens, Transactions;
 
     /**
      * Application Client ID.
