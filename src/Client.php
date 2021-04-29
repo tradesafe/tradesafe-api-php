@@ -10,13 +10,14 @@ use TradeSafe\Api\Traits\Amendments;
 use TradeSafe\Api\Traits\Calculator;
 use TradeSafe\Api\Traits\Constants;
 use TradeSafe\Api\Traits\Profile;
+use TradeSafe\Api\Traits\Reports;
 use TradeSafe\Api\Traits\Statistics;
 use TradeSafe\Api\Traits\Tokens;
 use TradeSafe\Api\Traits\Transactions;
 
 class Client
 {
-    use Allocations, Amendments, Calculator, Constants, Profile, Statistics, Tokens, Transactions;
+    use Allocations, Amendments, Calculator, Constants, Profile, Statistics, Tokens, Transactions, Reports;
 
     /**
      * Application Client ID.
