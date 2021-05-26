@@ -8,7 +8,17 @@ trait Reports {
     public function reportTransactionSummary($startDate = null, $endDate = null, $page = 1, $first = 10) {
         $gql = (new Query('reportTransactionSummary'));
 
-        $gql->setArguments(['page' => $page, 'first' => $first]);
+        $args = ['page' => $page, 'first' => $first];
+
+        if ($startDate) {
+            $args['startDate'] = $startDate;
+        }
+
+        if ($endDate) {
+            $args['endDate'] = $endDate;
+        }
+
+        $gql->setArguments($args);
 
         $query = [
             'id',
@@ -16,6 +26,19 @@ trait Reports {
             'state',
             'createdAt',
             'updatedAt',
+            (new Query('parties'))
+                ->setSelectionSet([
+                    'id',
+                    'role',
+                    'owner',
+                    (new Query('calculation'))
+                        ->setSelectionSet([
+                            'deposit',
+                            'payout',
+                            'processingFee',
+                            'totalFee',
+                        ]),
+                ]),
             (new Query('calculation'))
                 ->setSelectionSet([
                     'baseValue',
@@ -26,11 +49,24 @@ trait Reports {
                     'processingFeeVat',
                     'processingFeeTotal',
                 ]),
+            (new Query('allocations'))
+                ->setSelectionSet([
+                    (new Query('payments'))
+                        ->setSelectionSet([
+                            (new Query('account'))
+                                ->setSelectionSet([
+                                    'amount',
+                                    'type',
+                                    'status',
+                                ]),
+                        ]),
+                ]),
             (new Query('payments'))
                 ->setSelectionSet([
                     (new Query('account'))
                         ->setSelectionSet([
                             'amount',
+                            'type',
                             'status',
                         ]),
                 ]),
@@ -56,6 +92,35 @@ trait Reports {
 
         $gqlResponse = self::callApi($gql);
 
-        return $gqlResponse['transactions'];
+        return $gqlResponse['reportTransactionSummary'];
+    }
+
+    public function reportTransactionSummaryDownload(string $type = 'csv', $startDate = null, $endDate = null) {
+        switch ($type) {
+            case "csv":
+                $queryName = 'reportTransactionSummaryDownloadCsv';
+                break;
+            case "pdf":
+                $queryName = 'reportTransactionSummaryDownloadPdf';
+                break;
+        }
+
+        $gql = (new Query($queryName));
+
+        $args = [];
+
+        if ($startDate) {
+            $args['startDate'] = $startDate;
+        }
+
+        if ($endDate) {
+            $args['endDate'] = $endDate;
+        }
+
+        $gql->setArguments($args);
+
+        $gqlResponse = self::callApi($gql);
+
+        return $gqlResponse[$queryName];
     }
 }
