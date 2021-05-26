@@ -69,18 +69,27 @@ class Client
     private $context;
 
     /**
+     * Enabled debugging.
+     *
+     * @var bool
+     */
+    private $debug;
+
+    /**
      * Base directory for GraphQL schema files.
      *
      * @var string
      */
     private $schemaBasePath;
 
-    public function __construct($apiDomain = "api.tradesafe.co.za", $authDomain = 'auth.tradesafe.co.za', $context = null)
+    public function __construct($apiDomain = "api.tradesafe.co.za", $authDomain = 'auth.tradesafe.co.za', $context = null, $debug = false)
     {
         $this->apiDomain = $apiDomain;
         $this->authDomain = $authDomain;
         $this->context = $context;
         $this->schemaBasePath = __DIR__ . '/../graphql/';
+
+        $this->debug = $debug;
 
         $this->transactionsInit();
     }
@@ -151,6 +160,10 @@ class Client
         $httpOptions['headers'] = [
             'TradeSafe-Context' => $this->context
         ];
+
+        if ($this->debug === true) {
+            $httpOptions['verify'] = false;
+        }
 
         $gqlClient = new GraphQLClient(
             sprintf('https://%s/graphql', $this->apiDomain),
