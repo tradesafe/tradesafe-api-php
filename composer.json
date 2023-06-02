@@ -4,7 +4,7 @@
     "keywords": ["tradesafe","api","payment", "oauth", "graphql"],
     "type": "library",
     "require": {
-        "php": ">=7.3.0",
+        "php": ">=7.4.0",
         "ext-json": "*",
         "league/oauth2-client": "^2.5",
         "guzzlehttp/guzzle": "^6.0|^7.0",
@@ -18,8 +18,8 @@
     },
     "authors": [
         {
-            "name": "Richard Banks",
-            "email": "richard.banks@tradesafe.co.za",
+            "name": "TradeSafe",
+            "email": "support@tradesafe.co.za",
             "homepage": "https://www.tradesafe.co.za"
         }
     ],
