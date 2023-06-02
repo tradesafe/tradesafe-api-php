@@ -92,15 +92,24 @@ trait Tokens
     {
         $gql = (new Mutation('tokenUpdate'));
 
-        $input = sprintf('user: {
-            givenName: "%s"
-            familyName: "%s"
-            email: "%s"
-            mobile: "%s"
-            idNumber: "%s"
-            idType: %s
-            idCountry: %s
-        }', $user['givenName'], $user['familyName'], $user['email'], $user['mobile'], $user['idNumber'], $user['idType'], $user['idCountry']);
+        if (isset($user['idNumber'])) {
+            $input = sprintf('user: {
+                givenName: "%s"
+                familyName: "%s"
+                email: "%s"
+                mobile: "%s"
+                idNumber: "%s"
+                idType: %s
+                idCountry: %s
+            }', $user['givenName'], $user['familyName'], $user['email'], $user['mobile'], $user['idNumber'], $user['idType'], $user['idCountry']);
+        } else {
+            $input = sprintf('user: {
+                givenName: "%s"
+                familyName: "%s"
+                email: "%s"
+                mobile: "%s"
+            }', $user['givenName'], $user['familyName'], $user['email'], $user['mobile']);
+        }
 
         if (isset($organization)) {
             $input .= sprintf('organization: {
